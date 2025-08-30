@@ -1,0 +1,11 @@
+{
+  "map": {
+    "list": [
+      1,
+      "Hello",
+      2.0,
+      true
+    ],
+    "string": "I'm a String!"
+  }
+}
