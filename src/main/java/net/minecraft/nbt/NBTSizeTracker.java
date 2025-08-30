@@ -2,28 +2,26 @@ package net.minecraft.nbt;
 
 public class NBTSizeTracker {
 
-    public static final NBTSizeTracker field_152451_a = new NBTSizeTracker(0L) {
-
-        private static final String __OBFID = "CL_00001902";
-
-        public void func_152450_a(long size) {}
+    public static final NBTSizeTracker UNLIMITED = new NBTSizeTracker(0L) {
+        public void accumulateSize(long size) {}
     };
-    private final long field_152452_b;
-    private long field_152453_c;
-    private static final String __OBFID = "CL_00001903";
 
-    public NBTSizeTracker(long worldIn) {
-        this.field_152452_b = worldIn;
+    private final long maxByteSize;
+
+    private long byteSize;
+
+    public NBTSizeTracker(long maxByteSize) {
+        this.maxByteSize = maxByteSize;
     }
 
-    public void func_152450_a(long size) {
-        this.field_152453_c += size / 8L;
+    public void accumulateSize(long size) {
+        this.byteSize += size / 8L;
 
-        if (this.field_152453_c > this.field_152452_b) {
+        if (this.byteSize > this.maxByteSize) {
             throw new RuntimeException("Tried to read NBT tag that was too big; tried to allocate: "
-                + this.field_152453_c
+                + this.byteSize
                 + "bytes where max allowed: "
-                + this.field_152452_b);
+                + this.maxByteSize);
         }
     }
 
@@ -39,7 +37,7 @@ public class NBTSizeTracker {
      * This will accurately count the correct byte length to encode this string, plus the 2 bytes for it's length prefix.
      */
     public static void readUTF(NBTSizeTracker tracker, String data) {
-        tracker.func_152450_a(16); //Header length
+        tracker.accumulateSize(16); //Header length
         if (data == null) return;
 
         int len = data.length();
@@ -51,6 +49,6 @@ public class NBTSizeTracker {
             else if (c > 0x07FF) utflen += 3;
             else utflen += 2;
         }
-        tracker.func_152450_a(8 * utflen);
+        tracker.accumulateSize(8L * utflen);
     }
 }

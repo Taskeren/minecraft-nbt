@@ -8,16 +8,15 @@ public class NBTTagString extends NBTBase {
 
     /** The string value for the tag (cannot be empty). */
     private String data;
-    private static final String __OBFID = "CL_00001228";
 
     public NBTTagString() {
         this.data = "";
     }
 
-    public NBTTagString(String p_i1389_1_) {
-        this.data = p_i1389_1_;
+    public NBTTagString(String data) {
+        this.data = data;
 
-        if (p_i1389_1_ == null) {
+        if (data == null) {
             throw new IllegalArgumentException("Empty string not allowed");
         }
     }
@@ -29,7 +28,7 @@ public class NBTTagString extends NBTBase {
         output.writeUTF(this.data);
     }
 
-    void func_152446_a(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
+    void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         this.data = input.readUTF();
         NBTSizeTracker.readUTF(sizeTracker, data); // Forge: Correctly read String length including header.
     }
@@ -37,7 +36,7 @@ public class NBTTagString extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
-    public byte getId() {
+    public byte getType() {
         return (byte) 8;
     }
 
@@ -52,11 +51,11 @@ public class NBTTagString extends NBTBase {
         return new NBTTagString(this.data);
     }
 
-    public boolean equals(Object p_equals_1_) {
-        if (!super.equals(p_equals_1_)) {
+    public boolean equals(Object other) {
+        if (!super.equals(other)) {
             return false;
         } else {
-            NBTTagString nbttagstring = (NBTTagString) p_equals_1_;
+            NBTTagString nbttagstring = (NBTTagString) other;
             return this.data == null && nbttagstring.data == null
                 || this.data != null && this.data.equals(nbttagstring.data);
         }
@@ -66,7 +65,7 @@ public class NBTTagString extends NBTBase {
         return super.hashCode() ^ this.data.hashCode();
     }
 
-    public String func_150285_a_() {
+    public String toStringValue() {
         return this.data;
     }
 }

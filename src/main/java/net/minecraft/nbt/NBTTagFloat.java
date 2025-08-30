@@ -10,12 +10,11 @@ public class NBTTagFloat extends NBTBase.NBTPrimitive {
 
     /** The float value for the tag. */
     private float data;
-    private static final String __OBFID = "CL_00001220";
 
     NBTTagFloat() {}
 
-    public NBTTagFloat(float p_i45131_1_) {
-        this.data = p_i45131_1_;
+    public NBTTagFloat(float data) {
+        this.data = data;
     }
 
     /**
@@ -25,20 +24,20 @@ public class NBTTagFloat extends NBTBase.NBTPrimitive {
         output.writeFloat(this.data);
     }
 
-    void func_152446_a(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
-        sizeTracker.func_152450_a(32L);
+    void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
+        sizeTracker.accumulateSize(32L);
         this.data = input.readFloat();
     }
 
     /**
      * Gets the type byte for the tag.
      */
-    public byte getId() {
+    public byte getType() {
         return (byte) 5;
     }
 
     public String toString() {
-        return "" + this.data + "f";
+        return this.data + "f";
     }
 
     /**
@@ -48,9 +47,9 @@ public class NBTTagFloat extends NBTBase.NBTPrimitive {
         return new NBTTagFloat(this.data);
     }
 
-    public boolean equals(Object p_equals_1_) {
-        if (super.equals(p_equals_1_)) {
-            NBTTagFloat nbttagfloat = (NBTTagFloat) p_equals_1_;
+    public boolean equals(Object other) {
+        if (super.equals(other)) {
+            NBTTagFloat nbttagfloat = (NBTTagFloat) other;
             return this.data == nbttagfloat.data;
         } else {
             return false;
@@ -61,27 +60,27 @@ public class NBTTagFloat extends NBTBase.NBTPrimitive {
         return super.hashCode() ^ Float.floatToIntBits(this.data);
     }
 
-    public long func_150291_c() {
+    public long toLong() {
         return (long) this.data;
     }
 
-    public int func_150287_d() {
+    public int toInt() {
         return MathHelper.floor_float(this.data);
     }
 
-    public short func_150289_e() {
+    public short toShort() {
         return (short) (MathHelper.floor_float(this.data) & 65535);
     }
 
-    public byte func_150290_f() {
+    public byte toByte() {
         return (byte) (MathHelper.floor_float(this.data) & 255);
     }
 
-    public double func_150286_g() {
+    public double toDouble() {
         return (double) this.data;
     }
 
-    public float func_150288_h() {
+    public float toFloat() {
         return this.data;
     }
 }

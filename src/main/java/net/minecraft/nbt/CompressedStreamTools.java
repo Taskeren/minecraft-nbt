@@ -20,91 +20,69 @@ import java.util.zip.GZIPOutputStream;
 public class CompressedStreamTools {
 
     /**
-     * Load the gzipped compound from the inputstream.
+     * Load the gzipped compound from the InputStream.
      */
-    public static NBTTagCompound readCompressed(InputStream p_74796_0_) throws IOException {
-        DataInputStream datainputstream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(p_74796_0_)));
-        NBTTagCompound nbttagcompound;
-
-        try {
-            nbttagcompound = func_152456_a(datainputstream, NBTSizeTracker.field_152451_a);
-        } finally {
-            datainputstream.close();
+    public static NBTTagCompound readCompressed(InputStream inputStream) throws IOException {
+        try (DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(
+            inputStream)))) {
+            return read(dataInputStream, NBTSizeTracker.UNLIMITED);
         }
-
-        return nbttagcompound;
     }
 
     /**
-     * Write the compound, gzipped, to the outputstream.
+     * Write the compound, gzipped, to the OutputStream.
      */
-    public static void writeCompressed(NBTTagCompound p_74799_0_, OutputStream p_74799_1_) throws IOException {
-        DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(
-            p_74799_1_)));
-
-        try {
-            write(p_74799_0_, dataoutputstream);
-        } finally {
-            dataoutputstream.close();
+    public static void writeCompressed(NBTTagCompound nbtTagCompound, OutputStream outputStream) throws IOException {
+        try (DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(
+            outputStream)))) {
+            write(nbtTagCompound, dataoutputstream);
         }
     }
 
-    public static NBTTagCompound func_152457_a(byte[] p_152457_0_, NBTSizeTracker p_152457_1_) throws IOException {
-        DataInputStream datainputstream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(
-            p_152457_0_))));
-        NBTTagCompound nbttagcompound;
-
-        try {
-            nbttagcompound = func_152456_a(datainputstream, p_152457_1_);
-        } finally {
-            datainputstream.close();
+    public static NBTTagCompound read(byte[] bytes, NBTSizeTracker nbtSizeTracker) throws IOException {
+        try (DataInputStream datainputstream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(
+            bytes))))) {
+            return read(datainputstream, nbtSizeTracker);
         }
-
-        return nbttagcompound;
     }
 
-    public static byte[] compress(NBTTagCompound p_74798_0_) throws IOException {
-        ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
-        DataOutputStream dataoutputstream = new DataOutputStream(new GZIPOutputStream(bytearrayoutputstream));
-
-        try {
-            write(p_74798_0_, dataoutputstream);
-        } finally {
-            dataoutputstream.close();
+    public static byte[] compress(NBTTagCompound nbtTagCompound) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (DataOutputStream dataOutputStream = new DataOutputStream(new GZIPOutputStream(byteArrayOutputStream))) {
+            write(nbtTagCompound, dataOutputStream);
         }
-
-        return bytearrayoutputstream.toByteArray();
+        return byteArrayOutputStream.toByteArray();
     }
 
-    public static void safeWrite(NBTTagCompound p_74793_0_, File p_74793_1_) throws IOException {
-        File file2 = new File(p_74793_1_.getAbsolutePath() + "_tmp");
+    public static void safeWrite(NBTTagCompound nbtTagCompound, File file) throws IOException {
+        File tempFile = new File(file.getAbsolutePath() + "_tmp");
 
-        if (file2.exists()) {
-            file2.delete();
+        if (tempFile.exists()) {
+            tempFile.delete();
         }
 
-        write(p_74793_0_, file2);
+        write(nbtTagCompound, tempFile);
 
-        if (p_74793_1_.exists()) {
-            p_74793_1_.delete();
+        if (file.exists()) {
+            file.delete();
         }
 
-        if (p_74793_1_.exists()) {
-            throw new IOException("Failed to delete " + p_74793_1_);
+        if (file.exists()) {
+            throw new IOException("Failed to delete " + file);
         } else {
-            file2.renameTo(p_74793_1_);
+            tempFile.renameTo(file);
         }
     }
 
     /**
      * Reads from a CompressedStream.
      */
-    public static NBTTagCompound read(DataInputStream p_74794_0_) throws IOException {
-        return func_152456_a(p_74794_0_, NBTSizeTracker.field_152451_a);
+    public static NBTTagCompound read(DataInputStream dataInputStream) throws IOException {
+        return read(dataInputStream, NBTSizeTracker.UNLIMITED);
     }
 
-    public static NBTTagCompound func_152456_a(DataInput p_152456_0_, NBTSizeTracker p_152456_1_) throws IOException {
-        NBTBase nbtbase = func_152455_a(p_152456_0_, 0, p_152456_1_);
+    public static NBTTagCompound read(DataInput dataInput, NBTSizeTracker nbtSizeTracker) throws IOException {
+        NBTBase nbtbase = read(dataInput, 0, nbtSizeTracker);
 
         if (nbtbase instanceof NBTTagCompound) {
             return (NBTTagCompound) nbtbase;
@@ -113,68 +91,44 @@ public class CompressedStreamTools {
         }
     }
 
-    public static void write(NBTTagCompound p_74800_0_, DataOutput p_74800_1_) throws IOException {
-        func_150663_a(p_74800_0_, p_74800_1_);
-    }
+    private static void write(NBTBase nbtBase, DataOutput dataOutput) throws IOException {
+        dataOutput.writeByte(nbtBase.getType());
 
-    private static void func_150663_a(NBTBase p_150663_0_, DataOutput p_150663_1_) throws IOException {
-        p_150663_1_.writeByte(p_150663_0_.getId());
-
-        if (p_150663_0_.getId() != 0) {
-            p_150663_1_.writeUTF("");
-            p_150663_0_.write(p_150663_1_);
+        if (nbtBase.getType() != 0) {
+            dataOutput.writeUTF("");
+            nbtBase.write(dataOutput);
         }
     }
 
-    private static NBTBase func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_)
-        throws IOException {
-        byte b0 = p_152455_0_.readByte();
-        p_152455_2_.func_152450_a(8); // Forge: Count everything!
+    private static NBTBase read(DataInput dataInput, int i, NBTSizeTracker nbtSizeTracker) throws IOException {
+        byte b = dataInput.readByte();
+        nbtSizeTracker.accumulateSize(8); // Forge: Count everything!
 
-        if (b0 == 0) {
+        if (b == 0) {
             return new NBTTagEnd();
         } else {
-            NBTSizeTracker.readUTF(p_152455_2_, p_152455_0_.readUTF()); //Forge: Count this string.
-            p_152455_2_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
-            NBTBase nbtbase = NBTBase.func_150284_a(b0);
-
-            try {
-                nbtbase.func_152446_a(p_152455_0_, p_152455_1_, p_152455_2_);
-                return nbtbase;
-            } catch (IOException ioexception) {
-                throw new RuntimeException(ioexception);
-            }
+            NBTSizeTracker.readUTF(nbtSizeTracker, dataInput.readUTF()); //Forge: Count this string.
+            return NBTTagCompound.read(b, "", dataInput, i, nbtSizeTracker);
         }
     }
 
-    public static void write(NBTTagCompound p_74795_0_, File p_74795_1_) throws IOException {
-        DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(p_74795_1_));
-
-        try {
-            write(p_74795_0_, dataoutputstream);
-        } finally {
-            dataoutputstream.close();
+    public static void write(NBTTagCompound nbtTagCompound, File file) throws IOException {
+        try (DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(file))) {
+            write(nbtTagCompound, dataoutputstream);
         }
     }
 
-    public static NBTTagCompound read(File p_74797_0_) throws IOException {
-        return func_152458_a(p_74797_0_, NBTSizeTracker.field_152451_a);
+    public static NBTTagCompound read(File file) throws IOException {
+        return read(file, NBTSizeTracker.UNLIMITED);
     }
 
-    public static NBTTagCompound func_152458_a(File p_152458_0_, NBTSizeTracker p_152458_1_) throws IOException {
-        if (!p_152458_0_.exists()) {
+    public static NBTTagCompound read(File file, NBTSizeTracker nbtSizeTracker) throws IOException {
+        if (!file.exists()) {
             return null;
         } else {
-            DataInputStream datainputstream = new DataInputStream(new FileInputStream(p_152458_0_));
-            NBTTagCompound nbttagcompound;
-
-            try {
-                nbttagcompound = func_152456_a(datainputstream, p_152458_1_);
-            } finally {
-                datainputstream.close();
+            try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file))) {
+                return read(dataInputStream, nbtSizeTracker);
             }
-
-            return nbttagcompound;
         }
     }
 }

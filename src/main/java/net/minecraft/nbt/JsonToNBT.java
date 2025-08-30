@@ -10,7 +10,6 @@ import java.util.Stack;
 public class JsonToNBT {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonToNBT.class);
-    private static final String __OBFID = "CL_00001232";
 
     public static NBTBase func_150315_a(String p_150315_0_) throws NBTException {
         p_150315_0_ = p_150315_0_.trim();

@@ -9,12 +9,11 @@ public class NBTTagByteArray extends NBTBase {
 
     /** The byte array stored in the tag. */
     private byte[] byteArray;
-    private static final String __OBFID = "CL_00001213";
 
     NBTTagByteArray() {}
 
-    public NBTTagByteArray(byte[] p_i45128_1_) {
-        this.byteArray = p_i45128_1_;
+    public NBTTagByteArray(byte[] byteArray) {
+        this.byteArray = byteArray;
     }
 
     /**
@@ -25,10 +24,10 @@ public class NBTTagByteArray extends NBTBase {
         output.write(this.byteArray);
     }
 
-    void func_152446_a(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
-        sizeTracker.func_152450_a(32); //Forge: Count the length as well
+    void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
+        sizeTracker.accumulateSize(32); //Forge: Count the length as well
         int j = input.readInt();
-        sizeTracker.func_152450_a((long) (8 * j));
+        sizeTracker.accumulateSize(8L * j);
         this.byteArray = new byte[j];
         input.readFully(this.byteArray);
     }
@@ -36,7 +35,7 @@ public class NBTTagByteArray extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
-    public byte getId() {
+    public byte getType() {
         return (byte) 7;
     }
 
@@ -48,22 +47,20 @@ public class NBTTagByteArray extends NBTBase {
      * Creates a clone of the tag.
      */
     public NBTBase copy() {
-        byte[] abyte = new byte[this.byteArray.length];
-        System.arraycopy(this.byteArray, 0, abyte, 0, this.byteArray.length);
-        return new NBTTagByteArray(abyte);
+        byte[] copiedArray = new byte[this.byteArray.length];
+        System.arraycopy(this.byteArray, 0, copiedArray, 0, this.byteArray.length);
+        return new NBTTagByteArray(copiedArray);
     }
 
-    public boolean equals(Object p_equals_1_) {
-        return super.equals(p_equals_1_)
-            ? Arrays.equals(this.byteArray, ((NBTTagByteArray) p_equals_1_).byteArray)
-            : false;
+    public boolean equals(Object other) {
+        return super.equals(other) && Arrays.equals(this.byteArray, ((NBTTagByteArray) other).byteArray);
     }
 
     public int hashCode() {
         return super.hashCode() ^ Arrays.hashCode(this.byteArray);
     }
 
-    public byte[] func_150292_c() {
+    public byte[] getByteArray() {
         return this.byteArray;
     }
 }

@@ -8,12 +8,11 @@ public class NBTTagLong extends NBTBase.NBTPrimitive {
 
     /** The long value for the tag. */
     private long data;
-    private static final String __OBFID = "CL_00001225";
 
     NBTTagLong() {}
 
-    public NBTTagLong(long p_i45134_1_) {
-        this.data = p_i45134_1_;
+    public NBTTagLong(long data) {
+        this.data = data;
     }
 
     /**
@@ -23,20 +22,20 @@ public class NBTTagLong extends NBTBase.NBTPrimitive {
         output.writeLong(this.data);
     }
 
-    void func_152446_a(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
-        sizeTracker.func_152450_a(64L);
+    void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
+        sizeTracker.accumulateSize(64L);
         this.data = input.readLong();
     }
 
     /**
      * Gets the type byte for the tag.
      */
-    public byte getId() {
+    public byte getType() {
         return (byte) 4;
     }
 
     public String toString() {
-        return "" + this.data + "L";
+        return this.data + "L";
     }
 
     /**
@@ -46,9 +45,9 @@ public class NBTTagLong extends NBTBase.NBTPrimitive {
         return new NBTTagLong(this.data);
     }
 
-    public boolean equals(Object p_equals_1_) {
-        if (super.equals(p_equals_1_)) {
-            NBTTagLong nbttaglong = (NBTTagLong) p_equals_1_;
+    public boolean equals(Object other) {
+        if (super.equals(other)) {
+            NBTTagLong nbttaglong = (NBTTagLong) other;
             return this.data == nbttaglong.data;
         } else {
             return false;
@@ -56,30 +55,30 @@ public class NBTTagLong extends NBTBase.NBTPrimitive {
     }
 
     public int hashCode() {
-        return super.hashCode() ^ (int) (this.data ^ this.data >>> 32);
+        return super.hashCode() ^ Long.hashCode(this.data);
     }
 
-    public long func_150291_c() {
+    public long toLong() {
         return this.data;
     }
 
-    public int func_150287_d() {
-        return (int) (this.data & -1L);
+    public int toInt() {
+        return (int) (this.data);
     }
 
-    public short func_150289_e() {
+    public short toShort() {
         return (short) ((int) (this.data & 65535L));
     }
 
-    public byte func_150290_f() {
+    public byte toByte() {
         return (byte) ((int) (this.data & 255L));
     }
 
-    public double func_150286_g() {
+    public double toDouble() {
         return (double) this.data;
     }
 
-    public float func_150288_h() {
+    public float toFloat() {
         return (float) this.data;
     }
 }

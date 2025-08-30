@@ -6,9 +6,7 @@ import java.io.IOException;
 
 public class NBTTagEnd extends NBTBase {
 
-    private static final String __OBFID = "CL_00001219";
-
-    void func_152446_a(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {}
+    void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {}
 
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes
@@ -18,7 +16,7 @@ public class NBTTagEnd extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
-    public byte getId() {
+    public byte getType() {
         return (byte) 0;
     }
 

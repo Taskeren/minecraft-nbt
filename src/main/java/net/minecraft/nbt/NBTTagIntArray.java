@@ -9,12 +9,11 @@ public class NBTTagIntArray extends NBTBase {
 
     /** The array of saved integers */
     private int[] intArray;
-    private static final String __OBFID = "CL_00001221";
 
     NBTTagIntArray() {}
 
-    public NBTTagIntArray(int[] p_i45132_1_) {
-        this.intArray = p_i45132_1_;
+    public NBTTagIntArray(int[] intArray) {
+        this.intArray = intArray;
     }
 
     /**
@@ -23,15 +22,15 @@ public class NBTTagIntArray extends NBTBase {
     void write(DataOutput output) throws IOException {
         output.writeInt(this.intArray.length);
 
-        for (int i = 0; i < this.intArray.length; ++i) {
-            output.writeInt(this.intArray[i]);
+        for (int j : this.intArray) {
+            output.writeInt(j);
         }
     }
 
-    void func_152446_a(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
-        sizeTracker.func_152450_a(32); //Forge: Count the length as well
+    void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
+        sizeTracker.accumulateSize(32); //Forge: Count the length as well
         int j = input.readInt();
-        sizeTracker.func_152450_a((long) (32 * j));
+        sizeTracker.accumulateSize(32L * j);
         this.intArray = new int[j];
 
         for (int k = 0; k < j; ++k) {
@@ -42,18 +41,16 @@ public class NBTTagIntArray extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
-    public byte getId() {
+    public byte getType() {
         return (byte) 11;
     }
 
     public String toString() {
-        String s = "[";
-        int[] aint = this.intArray;
-        int i = aint.length;
+        StringBuilder s = new StringBuilder("[");
+        int[] intArray = this.intArray;
 
-        for (int j = 0; j < i; ++j) {
-            int k = aint[j];
-            s = s + k + ",";
+        for (int k : intArray) {
+            s.append(k).append(",");
         }
 
         return s + "]";
@@ -63,22 +60,20 @@ public class NBTTagIntArray extends NBTBase {
      * Creates a clone of the tag.
      */
     public NBTBase copy() {
-        int[] aint = new int[this.intArray.length];
-        System.arraycopy(this.intArray, 0, aint, 0, this.intArray.length);
-        return new NBTTagIntArray(aint);
+        int[] copiedArray = new int[this.intArray.length];
+        System.arraycopy(this.intArray, 0, copiedArray, 0, this.intArray.length);
+        return new NBTTagIntArray(copiedArray);
     }
 
-    public boolean equals(Object p_equals_1_) {
-        return super.equals(p_equals_1_)
-            ? Arrays.equals(this.intArray, ((NBTTagIntArray) p_equals_1_).intArray)
-            : false;
+    public boolean equals(Object other) {
+        return super.equals(other) && Arrays.equals(this.intArray, ((NBTTagIntArray) other).intArray);
     }
 
     public int hashCode() {
         return super.hashCode() ^ Arrays.hashCode(this.intArray);
     }
 
-    public int[] func_150302_c() {
+    public int[] getIntArray() {
         return this.intArray;
     }
 }
