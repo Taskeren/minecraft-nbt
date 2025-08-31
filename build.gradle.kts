@@ -1,5 +1,6 @@
 plugins {
 	id("java")
+	`maven-publish`
 }
 
 group = "cn.taskeren"
@@ -27,4 +28,21 @@ java {
 
 tasks.test {
 	useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            groupId = "cn.elytra"
+            artifactId = "minecraft-nbt"
+            version = project.version.toString()
+        }
+    }
+    repositories {
+        maven {
+            name = "local"
+            url = uri("file://${layout.buildDirectory.get()}/repo")
+        }
+    }
 }
