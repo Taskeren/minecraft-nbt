@@ -20,6 +20,7 @@ public class NBTTagCompound extends NBTBase {
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes
      */
+    @Override
     void write(DataOutput output) throws IOException {
         for (String s : this.tagMap.keySet()) {
             NBTBase nbtbase = this.tagMap.get(s);
@@ -29,6 +30,7 @@ public class NBTTagCompound extends NBTBase {
         output.writeByte(0);
     }
 
+    @Override
     void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         if (depth > 512) {
             throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
@@ -52,6 +54,7 @@ public class NBTTagCompound extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
+    @Override
     public byte getType() {
         return (byte) 10;
     }
@@ -137,7 +140,7 @@ public class NBTTagCompound extends NBTBase {
      * gets a generic tag with the specified name
      */
     public NBTBase getTag(String key) {
-        return (NBTBase) this.tagMap.get(key);
+        return this.tagMap.get(key);
     }
 
     public byte getTagType(String key) {
@@ -301,6 +304,7 @@ public class NBTTagCompound extends NBTBase {
         this.tagMap.remove(key);
     }
 
+    @Override
     public String toString() {
         String s = "{";
         String s1;
@@ -326,6 +330,7 @@ public class NBTTagCompound extends NBTBase {
     /**
      * Creates a clone of the tag.
      */
+    @Override
     public NBTBase copy() {
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
         for (String s : this.tagMap.keySet()) {
@@ -367,7 +372,7 @@ public class NBTTagCompound extends NBTBase {
 
     static NBTBase read(byte type, String key, DataInput input, int depth, NBTSizeTracker sizeTracker) {
         sizeTracker.accumulateSize(32); //Forge: 4 extra bytes for the object allocation.
-        NBTBase nbtbase = NBTBase.createDefaultByTypeUnchecked(type);
+        NBTBase nbtbase = NBTBase.Type.byId(type).newInstance();
 
         try {
             nbtbase.read(input, depth, sizeTracker);

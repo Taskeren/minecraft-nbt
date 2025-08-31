@@ -1,8 +1,5 @@
 package net.minecraft.nbt;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -64,15 +61,6 @@ public abstract class NBTBase {
      * Gets the type byte for the tag.
      */
     public abstract byte getType();
-
-    protected static @NotNull NBTBase createDefaultByType(@Range(from = 0, to = 11) byte id) {
-        return Type.byId(id).newInstance();
-    }
-
-    protected static @NotNull NBTBase createDefaultByTypeUnchecked(byte id) {
-        if (id < 0 || id > 11) throw new IllegalArgumentException("Invalid type, must be between 0 and 11");
-        return createDefaultByType(id);
-    }
 
     /**
      * Creates a clone of the tag.

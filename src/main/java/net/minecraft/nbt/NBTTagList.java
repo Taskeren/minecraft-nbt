@@ -1,6 +1,7 @@
 package net.minecraft.nbt;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -19,6 +20,7 @@ public class NBTTagList extends NBTBase {
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes
      */
+    @Override
     void write(DataOutput output) throws IOException {
         if (!this.tagList.isEmpty()) {
             this.tagType = this.tagList.getFirst().getType();
@@ -34,6 +36,7 @@ public class NBTTagList extends NBTBase {
         }
     }
 
+    @Override
     void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         if (depth > 512) {
             throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
@@ -46,7 +49,7 @@ public class NBTTagList extends NBTBase {
 
             for (int k = 0; k < j; ++k) {
                 sizeTracker.accumulateSize(32); //Forge: 4 extra bytes for the object allocation.
-                NBTBase nbtbase = NBTBase.createDefaultByTypeUnchecked(this.tagType);
+                NBTBase nbtbase = NBTBase.Type.byId(this.tagType).newInstance();
                 nbtbase.read(input, depth + 1, sizeTracker);
                 this.tagList.add(nbtbase);
             }
@@ -56,10 +59,12 @@ public class NBTTagList extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
+    @Override
     public byte getType() {
         return (byte) 9;
     }
 
+    @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[");
         int i = 0;
@@ -119,6 +124,13 @@ public class NBTTagList extends NBTBase {
         return type.newInstance();
     }
 
+    public @Nullable NBTBase getTag(int i) {
+        if (i >= 0 && i < this.tagList.size()) {
+            return this.tagList.get(i);
+        }
+        return null;
+    }
+
     public byte getByte(int i) {
         return ((NBTTagByte) getAtOrDefault(i, Type.BYTE)).toByte();
     }
@@ -127,7 +139,7 @@ public class NBTTagList extends NBTBase {
         return ((NBTTagShort) getAtOrDefault(i, Type.SHORT)).toShort();
     }
 
-    public int getInt(int i) {
+    public int getInteger(int i) {
         return ((NBTTagInt) getAtOrDefault(i, Type.INT)).toInt();
     }
 
@@ -173,6 +185,7 @@ public class NBTTagList extends NBTBase {
     /**
      * Creates a clone of the tag.
      */
+    @Override
     public NBTBase copy() {
         NBTTagList nbttaglist = new NBTTagList();
         nbttaglist.tagType = this.tagType;

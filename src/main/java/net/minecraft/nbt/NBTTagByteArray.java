@@ -19,11 +19,13 @@ public class NBTTagByteArray extends NBTBase {
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes
      */
+    @Override
     void write(DataOutput output) throws IOException {
         output.writeInt(this.byteArray.length);
         output.write(this.byteArray);
     }
 
+    @Override
     void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         sizeTracker.accumulateSize(32); //Forge: Count the length as well
         int j = input.readInt();
@@ -35,10 +37,12 @@ public class NBTTagByteArray extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
+    @Override
     public byte getType() {
         return (byte) 7;
     }
 
+    @Override
     public String toString() {
         return "[" + this.byteArray.length + " bytes]";
     }
@@ -46,6 +50,7 @@ public class NBTTagByteArray extends NBTBase {
     /**
      * Creates a clone of the tag.
      */
+    @Override
     public NBTBase copy() {
         byte[] copiedArray = new byte[this.byteArray.length];
         System.arraycopy(this.byteArray, 0, copiedArray, 0, this.byteArray.length);

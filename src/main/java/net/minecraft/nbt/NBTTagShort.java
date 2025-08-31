@@ -18,10 +18,12 @@ public class NBTTagShort extends NBTBase.NBTPrimitive {
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes
      */
+    @Override
     void write(DataOutput output) throws IOException {
         output.writeShort(this.data);
     }
 
+    @Override
     void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         sizeTracker.accumulateSize(16L);
         this.data = input.readShort();
@@ -30,10 +32,12 @@ public class NBTTagShort extends NBTBase.NBTPrimitive {
     /**
      * Gets the type byte for the tag.
      */
+    @Override
     public byte getType() {
         return (byte) 2;
     }
 
+    @Override
     public String toString() {
         return this.data + "s";
     }
@@ -41,6 +45,7 @@ public class NBTTagShort extends NBTBase.NBTPrimitive {
     /**
      * Creates a clone of the tag.
      */
+    @Override
     public NBTBase copy() {
         return new NBTTagShort(this.data);
     }
@@ -58,26 +63,32 @@ public class NBTTagShort extends NBTBase.NBTPrimitive {
         return super.hashCode() ^ this.data;
     }
 
+    @Override
     public long toLong() {
         return this.data;
     }
 
+    @Override
     public int toInt() {
         return this.data;
     }
 
+    @Override
     public short toShort() {
         return this.data;
     }
 
+    @Override
     public byte toByte() {
         return (byte) (this.data & 255);
     }
 
+    @Override
     public double toDouble() {
         return this.data;
     }
 
+    @Override
     public float toFloat() {
         return this.data;
     }

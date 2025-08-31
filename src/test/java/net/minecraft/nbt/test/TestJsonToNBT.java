@@ -55,7 +55,7 @@ public class TestJsonToNBT {
         NBTTagList list = compound.getTagList("list", NBTBase.Type.INT.getId());
         Assertions.assertInstanceOf(NBTTagList.class, list);
         for (int i = 0; i < list.tagCount(); i++) {
-            Assertions.assertEquals(i + 1, list.getInt(i));
+            Assertions.assertEquals(i + 1, list.getInteger(i));
         }
 
         Assertions.assertEquals(

@@ -24,10 +24,12 @@ public class NBTTagString extends NBTBase {
     /**
      * Write the actual data contents of the tag, implemented in NBT extension classes
      */
+    @Override
     void write(DataOutput output) throws IOException {
         output.writeUTF(this.data);
     }
 
+    @Override
     void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException {
         this.data = input.readUTF();
         NBTSizeTracker.readUTF(sizeTracker, data); // Forge: Correctly read String length including header.
@@ -36,10 +38,12 @@ public class NBTTagString extends NBTBase {
     /**
      * Gets the type byte for the tag.
      */
+    @Override
     public byte getType() {
         return (byte) 8;
     }
 
+    @Override
     public String toString() {
         return "\"" + this.data + "\"";
     }
@@ -47,6 +51,7 @@ public class NBTTagString extends NBTBase {
     /**
      * Creates a clone of the tag.
      */
+    @Override
     public NBTBase copy() {
         return new NBTTagString(this.data);
     }
@@ -65,6 +70,7 @@ public class NBTTagString extends NBTBase {
         return super.hashCode() ^ this.data.hashCode();
     }
 
+    @Override
     public String toStringValue() {
         return this.data;
     }
