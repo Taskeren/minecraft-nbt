@@ -224,17 +224,6 @@ public class NBTTagCompound extends NBTBase {
     }
 
     /**
-     * Retrieves a string value using the specified key, or an empty string if no such key was stored.
-     */
-    public String getString(String key) {
-        try {
-            return !this.tagMap.containsKey(key) ? "" : ((NBTBase) this.tagMap.get(key)).toStringValue();
-        } catch (ClassCastException classcastexception) {
-            return "";
-        }
-    }
-
-    /**
      * Retrieves a byte array using the specified key, or a zero-length array if no such key was stored.
      */
     public byte[] getByteArray(String key) {
@@ -248,11 +237,27 @@ public class NBTTagCompound extends NBTBase {
     }
 
     /**
-     * Retrieves an int array using the specified key, or a zero-length array if no such key was stored.
+     * Retrieves a string value using the specified key, or an empty string if no such key was stored.
      */
-    public int[] getIntArray(String key) {
+    public String getString(String key) {
         try {
-            return !this.tagMap.containsKey(key) ? new int[0] : ((NBTTagIntArray) this.tagMap.get(key)).getIntArray();
+            return !this.tagMap.containsKey(key) ? "" : ((NBTBase) this.tagMap.get(key)).toStringValue();
+        } catch (ClassCastException classcastexception) {
+            return "";
+        }
+    }
+
+    /**
+     * Gets the NBTTagList object with the given name. Args: name, NBTBase type
+     */
+    public NBTTagList getTagList(String key, int type) {
+        try {
+            if (this.getTagType(key) != 9) {
+                return new NBTTagList();
+            } else {
+                NBTTagList nbttaglist = (NBTTagList) this.tagMap.get(key);
+                return nbttaglist.tagCount() > 0 && nbttaglist.getTagType() != type ? new NBTTagList() : nbttaglist;
+            }
         } catch (ClassCastException classcastexception) {
             throw new RuntimeException(classcastexception);
         }
@@ -271,16 +276,11 @@ public class NBTTagCompound extends NBTBase {
     }
 
     /**
-     * Gets the NBTTagList object with the given name. Args: name, NBTBase type
+     * Retrieves an int array using the specified key, or a zero-length array if no such key was stored.
      */
-    public NBTTagList getTagList(String key, int type) {
+    public int[] getIntArray(String key) {
         try {
-            if (this.getTagType(key) != 9) {
-                return new NBTTagList();
-            } else {
-                NBTTagList nbttaglist = (NBTTagList) this.tagMap.get(key);
-                return nbttaglist.tagCount() > 0 && nbttaglist.getTagType() != type ? new NBTTagList() : nbttaglist;
-            }
+            return !this.tagMap.containsKey(key) ? new int[0] : ((NBTTagIntArray) this.tagMap.get(key)).getIntArray();
         } catch (ClassCastException classcastexception) {
             throw new RuntimeException(classcastexception);
         }

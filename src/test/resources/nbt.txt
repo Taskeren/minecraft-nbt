@@ -1,0 +1,9 @@
+{
+  map: {
+    list: [1, 2, 3, 4, 5],
+    string: "I'm a String!",
+    bool: true,
+    float: 3.0f,
+    double: 1.5d
+  }
+}

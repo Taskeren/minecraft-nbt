@@ -1,5 +1,7 @@
 package net.minecraft.nbt;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -107,55 +109,58 @@ public class NBTTagList extends NBTBase {
         return this.tagList.remove(i);
     }
 
-    /**
-     * Retrieves the NBTTagCompound at the specified index in the list
-     */
-    public NBTTagCompound getCompoundTagAt(int i) {
+    private NBTBase getAtOrDefault(int i, Type type) {
         if (i >= 0 && i < this.tagList.size()) {
-            NBTBase nbtbase = this.tagList.get(i);
-            return nbtbase.getType() == 10 ? (NBTTagCompound) nbtbase : new NBTTagCompound();
-        } else {
-            return new NBTTagCompound();
+            NBTBase nbt = this.tagList.get(i);
+            if (nbt.getType() == type.getId()) {
+                return nbt;
+            }
         }
+        return type.newInstance();
     }
 
-    public int[] getIntListAt(int i) {
-        if (i >= 0 && i < this.tagList.size()) {
-            NBTBase nbtbase = this.tagList.get(i);
-            return nbtbase.getType() == 11 ? ((NBTTagIntArray) nbtbase).getIntArray() : new int[0];
-        } else {
-            return new int[0];
-        }
+    public byte getByte(int i) {
+        return ((NBTTagByte) getAtOrDefault(i, Type.BYTE)).toByte();
     }
 
-    public double getDoubleTagAt(int i) {
-        if (i >= 0 && i < this.tagList.size()) {
-            NBTBase nbtbase = this.tagList.get(i);
-            return nbtbase.getType() == 6 ? ((NBTTagDouble) nbtbase).toDouble() : 0.0D;
-        } else {
-            return 0.0D;
-        }
+    public short getShort(int i) {
+        return ((NBTTagShort) getAtOrDefault(i, Type.SHORT)).toShort();
     }
 
-    public float getFloatTagAt(int i) {
-        if (i >= 0 && i < this.tagList.size()) {
-            NBTBase nbtbase = this.tagList.get(i);
-            return nbtbase.getType() == 5 ? ((NBTTagFloat) nbtbase).toFloat() : 0.0F;
-        } else {
-            return 0.0F;
-        }
+    public int getInt(int i) {
+        return ((NBTTagInt) getAtOrDefault(i, Type.INT)).toInt();
     }
 
-    /**
-     * Retrieves the tag String value at the specified index in the list
-     */
-    public String getStringTagAt(int i) {
-        if (i >= 0 && i < this.tagList.size()) {
-            NBTBase nbtbase = this.tagList.get(i);
-            return nbtbase.getType() == 8 ? nbtbase.toStringValue() : nbtbase.toString();
-        } else {
-            return "";
-        }
+    public long getLong(int i) {
+        return ((NBTTagLong) getAtOrDefault(i, Type.LONG)).toLong();
+    }
+
+    public float getFloat(int i) {
+        return ((NBTTagFloat) getAtOrDefault(i, Type.FLOAT)).toFloat();
+    }
+
+    public double getDouble(int i) {
+        return ((NBTTagDouble) getAtOrDefault(i, Type.DOUBLE)).toDouble();
+    }
+
+    public byte @NotNull [] getByteArray(int i) {
+        return ((NBTTagByteArray) getAtOrDefault(i, Type.BYTE_ARRAY)).getByteArray();
+    }
+
+    public @NotNull String getString(int i) {
+        return ((NBTTagString) getAtOrDefault(i, Type.STRING)).toStringValue();
+    }
+
+    public @NotNull NBTTagList getList(int i) {
+        return (NBTTagList) getAtOrDefault(i, Type.LIST);
+    }
+
+    public @NotNull NBTTagCompound getCompound(int i) {
+        return (NBTTagCompound) getAtOrDefault(i, Type.COMPOUND);
+    }
+
+    public int @NotNull [] getIntArray(int i) {
+        return ((NBTTagIntArray) getAtOrDefault(i, Type.INT_ARRAY)).getIntArray();
     }
 
     /**
